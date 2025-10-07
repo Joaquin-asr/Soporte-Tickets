@@ -10,9 +10,10 @@ import { CategoriaTicket } from '../../interfaces/categoria-ticket';
   templateUrl: './ticket.html',
   styleUrl: './ticket.css'
 })
-export class Ticket implements OnInit{
+export class Ticket implements OnInit {
   ticketForm: FormGroup;
   isLoading = false;
+  mostrarCodigo = false;
   categoriaTickets: CategoriaTicket[] = [];
 
 
@@ -29,6 +30,7 @@ export class Ticket implements OnInit{
       codigoAlumno: ['', [Validators.required, Validators.pattern(/^A\d{8}$/)]],
       sede: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      codigoValidacion: ['', [Validators.pattern(/^[0-9]{6}$/)]],
       categoria: ['', Validators.required],
       asunto: ['', Validators.required],
       comentarios: ['', Validators.required]
@@ -36,21 +38,33 @@ export class Ticket implements OnInit{
   }
 
   listarCategoriaTickets(): void {
-  this.categoriaTicketService.listarCategoriaTicket().subscribe({
-    next: (data) => {
-      this.categoriaTickets = data;
-      this.isLoading = false;
-    },
-    error: (err) => {
-      console.error("Error al listar categorías:", err);
-      this.isLoading = false;
-    }
-  });
-}
+    this.categoriaTicketService.listarCategoriaTicket().subscribe({
+      next: (data) => {
+        this.categoriaTickets = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error("Error al listar categorías:", err);
+        this.isLoading = false;
+      }
+    });
+  }
 
-ngOnInit(): void {
-  this.listarCategoriaTickets();
-}
+  enviarCodigo(): void {
+    const emailControl = this.ticketForm.get('email');
+    if (emailControl?.valid) {
+      this.mostrarCodigo = true;
+      // Aquí podrías llamar al servicio que genera y envía el código:
+      // this.ticketService.enviarCodigo(emailControl.value).subscribe(...)
+    } else {
+      emailControl?.markAsTouched();
+      alert('Por favor, ingresa un correo electrónico válido antes de continuar.');
+    }
+  }
+
+  ngOnInit(): void {
+    this.listarCategoriaTickets();
+  }
 
 
   onSubmit(): void {
@@ -97,6 +111,7 @@ ngOnInit(): void {
 
   onReset() {
     this.ticketForm.reset();
+    this.mostrarCodigo = false;
   }
 
   onCancel() {

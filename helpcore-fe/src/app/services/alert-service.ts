@@ -4,7 +4,7 @@ import { Notyf } from 'notyf';
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService {
+export class AlertService {
   private notyf: Notyf;
 
   constructor() {
