@@ -1,0 +1,65 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1 class="login-title">Iniciar Sesión</h1>
+      <p class="login-subtitle">Accede a tu cuenta de HelpCore</p>
+    </div>
+
+    <form class="login-form" id="loginForm" (submit)="login()" [formGroup]="loginForm">
+      <div class="form-group mb-3">
+        <div class="input-group">
+          <div class="input-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <input 
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Usuario o correo electrónico"
+            class="form-control"
+            formControlName="nombreUsuario"
+            required
+          >
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <div class="input-group">
+          <div class="input-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <input 
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Contraseña"
+            class="form-control"
+            formControlName="contrasena"
+            required
+          >
+        </div>
+      </div>
+
+      <div *ngIf="mensaje" class="error-message mb-2">
+        {{ mensaje }}
+      </div>
+
+      <button type="submit" class="btn-primary w-100">
+        <i class="fas fa-sign-in-alt"></i>
+        Iniciar Sesión
+      </button>
+
+      <div class="form-footer">
+        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+      </div>
+    </form>
+
+    <div class="login-footer">
+      <p class="brand-text">
+        <i class="fas fa-ticket-alt"></i>
+        HelpCore
+      </p>
+      <p class="copyright">Sistema de gestión de tickets</p>
+    </div>
+  </div>
+</div>

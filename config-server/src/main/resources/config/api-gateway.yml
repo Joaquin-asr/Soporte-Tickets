@@ -1,0 +1,91 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      uri: http://localhost:8888
+      username: admin
+      password: config123
+      fail-fast: false
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Ruta para Auth Service
+        - id: auth-service-protected
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/rol/**
+          filters:
+            - StripPrefix=1
+            - AuthenticationFilter
+
+        - id: auth-service-public
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        # Ruta para Ticket Service
+        - id: ticket-service
+          uri: lb://ticket-service
+          predicates:
+            - Path=/api/ticket/**, /api/categoria-ticket/**
+          filters:
+            - StripPrefix=1
+            - AuthenticationFilter
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:4200"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            expose-headers:
+              - "Authorization"
+            allow-credentials: true
+            max-age: 3600
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+
+#MSG DE CARLOS: Importante que lo de abajo tenga el mismo valor que el auth.
+app:
+  security:
+    jwt:
+      secret: QmFzZTY0RW5jb2RlZEtleVNlZ3VyYUV4YW1wbGVEYXRhIQ==
+      expiration: 900000
+      refresh-token:
+        expiration: 604800000
